@@ -1,0 +1,5 @@
+name: scRNA Benchmark (spaghetti)
+id: spaghetti-plan
+description: Benchmarking scRNA pipelines
+benchmarker: "Atreya Choudhury"
+version: "1.0.0"
