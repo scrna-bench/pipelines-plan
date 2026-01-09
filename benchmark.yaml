@@ -46,7 +46,7 @@ stages:
         software_environment: "pipelines-r_conda_env"
         repository:
           url: https://github.com/scrna-bench/pipelines-r
-          commit: COMMIT
+          commit: main
         parameters:
           - methods: ["osca", "seurat", "scrapper", "seurat-sketch"]
       - id: pipeplines-py
@@ -54,6 +54,6 @@ stages:
         software_environment: "pipelines-py_conda_env"
         repository:
           url: https://github.com/scrna-bench/pipelines-py
-          commit: COMMIT
+          commit: main
         parameters:
           - methods: ["scanpy", "rapids"]
