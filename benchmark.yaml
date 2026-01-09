@@ -1,6 +1,6 @@
 name: scRNA Benchmark (pipelines)
 id: pipelines-plan
-description: Benchmarking scRNA pipelines
+description: "Benchmarking scRNA pipelines (as implemented by Billato et al.: 10.1101/2025.10.28.681564)"
 benchmarker: "Atreya Choudhury, Mark Robinson, Martin Emons, David Wissel"
 version: "1.0.0"
 
