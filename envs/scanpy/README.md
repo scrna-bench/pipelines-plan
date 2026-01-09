@@ -1,4 +1,25 @@
-## Apptainer def file structure
+## Building the Container
+
+```bash
+apptainer build scanpy_full.sif scanpy_full.def
+```
+
+## Using the Container
+
+```bash
+# Run Python script
+apptainer exec scanpy_full.sif python script.py
+
+# Interactive Python
+apptainer run scanpy_full.sif
+
+# Shell access
+apptainer shell scanpy_full.sif
+```
+
+---
+
+## Apptainer def file structure info:
 
 ### `Bootstrap` and `From`
 **What it does:** Specifies the base image for the container.
@@ -68,24 +89,3 @@ Use `pip install` with exact version pins for Python packages from conda yml
 ```
 - Makes the container executable as a Python interpreter
 - Usage: `apptainer run scanpy_env.sif script.py`
-
----
-
-## Building the Container
-
-```bash
-apptainer build scanpy_env.sif scanpy_env.def
-```
-
-## Using the Container
-
-```bash
-# Run Python script
-apptainer exec scanpy_env.sif python script.py
-
-# Interactive Python
-apptainer run scanpy_env.sif
-
-# Shell access
-apptainer shell scanpy_env.sif
-```
