@@ -9,6 +9,12 @@ software_environments:
   datasets_conda_env:
     name: datasets conda environment
     conda: envs/datasets-conda.yaml
+  pipelines-r_conda_env:
+    name: pipelines-r conda environment
+    conda: "pipelines-r_conda_env"
+  pipelines-py_conda_env:
+    name: pipelines-py conda environment
+    conda: "pipelines-py_conda_env"
 
 stages:
   - id: datasets
