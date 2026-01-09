@@ -70,7 +70,7 @@ stages:
           url: https://github.com/scrna-bench/metrics
           commit: doloret
         parameters:
-          - values: ["--metric", "adjusted_rand_score"]
+          - metrics: ["adjusted_rand_score"]
     inputs:
       - entries:
           - cluster.tsv
