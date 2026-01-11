@@ -14,6 +14,7 @@ From: python:3.12.9-slim
         gfortran \
         cmake \
         make \
+        git \
         libhdf5-dev \
         libopenblas-dev \
         libigraph-dev \
