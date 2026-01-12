@@ -30,17 +30,19 @@ stages:
         software_environment: "datasets_conda_env"
         repository:
           url: https://github.com/scrna-bench/datasets
-          commit: main
+          commit: 411b717
         parameters:
-          - dataset_name: "sc-mix"
+          - dataset_name: ["sc-mix", "cb"]
   - id: methods
     inputs:
       - data.h5ad
     outputs:
       - id: timings.json
         path: "{dataset}.timings.json"
-      - id: cluster.tsv
-        path: "{dataset}.cluster.tsv"
+      - id: leiden.tsv
+        path: "{dataset}.leiden.tsv"
+      - id: louvain.tsv
+        path: "{dataset}.louvain.tsv"
       - id: pca.tsv
         path: "{dataset}.pca.tsv"
     modules:
@@ -49,9 +51,9 @@ stages:
         software_environment: "pipelines-r_conda_env"
         repository:
           url: https://github.com/scrna-bench/pipelines-r
-          commit: main
+          commit: e415d1f
         parameters:
-          - methods: ["osca", "seurat", "scrapper", "seurat-sketch"]
+          - method_name: ["seurat", "osca", "scrapper"]
       - id: pipeplines-py
         name: "run python pipelines"
         software_environment: "pipelines-py_conda_env"
@@ -71,8 +73,8 @@ stages:
         parameters:
           - metrics: ["adjusted_rand_score"]
     inputs:
-        - cluster.tsv
-        - data.h5ad
+      - cluster.tsv
+      - data.h5ad
     outputs:
       - id: metrics.scores
         path: "{dataset}.scores.json"

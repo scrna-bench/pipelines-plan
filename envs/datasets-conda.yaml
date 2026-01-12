@@ -4,8 +4,10 @@ channels:
   - bioconda
   - nodefaults
 dependencies:
-  - r-base==4.4
+  - r-base==4.3
   - r-argparse
   - pydantic >=2,<3
   - pydantic-core
+  - bioconductor-singlecellmultimodal
+  - bioconductor-tenxbraindata
   - bioconductor-zellkonverter
