@@ -12,12 +12,12 @@ software_environments:
   pipelines-r_conda_env:
     name: pipelines-r conda environment
     conda: envs/pipelines-r_conda_env.yaml
-  pipelines-py_conda_env:
-    name: pipelines-py conda environment
-    conda: envs/pipelines-py_conda_env.yaml
-  metrics_conda_env:
-    name: metrics conda env
-    conda: envs/metrics_conda_env.yaml
+#  pipelines-py_conda_env:
+#    name: pipelines-py conda environment
+#    conda: envs/pipelines-py_conda_env.yaml
+#  metrics_conda_env:
+#    name: metrics conda env
+#    conda: envs/metrics_conda_env.yaml
 
 stages:
   - id: datasets
@@ -54,27 +54,27 @@ stages:
           commit: e415d1f
         parameters:
           - method_name: ["seurat", "osca", "scrapper"]
-      - id: pipeplines-py
-        name: "run python pipelines"
-        software_environment: "pipelines-py_conda_env"
-        repository:
-          url: https://github.com/scrna-bench/pipelines-py
-          commit: main
-        parameters:
-          - methods: ["scanpy", "rapids"]
-  - id: metrics
-    modules:
-      - id: metrics
-        name: "pipelines clustering metrics"
-        software_environment: "metrics_conda_env"
-        repository:
-          url: https://github.com/scrna-bench/metrics
-          commit: main
-        parameters:
-          - metrics: ["adjusted_rand_score"]
-    inputs:
-      - cluster.tsv
-      - data.h5ad
-    outputs:
-      - id: metrics.scores
-        path: "{dataset}.scores.json"
+    #  - id: pipeplines-py
+    #    name: "run python pipelines"
+    #    software_environment: "pipelines-py_conda_env"
+    #    repository:
+    #      url: https://github.com/scrna-bench/pipelines-py
+    #      commit: main
+    #    parameters:
+    #      - methods: ["scanpy", "rapids"]
+  #- id: metrics
+  #  modules:
+  #    - id: metrics
+  #      name: "pipelines clustering metrics"
+  #      software_environment: "metrics_conda_env"
+  #      repository:
+  #        url: https://github.com/scrna-bench/metrics
+  #        commit: main
+  #      parameters:
+  #        - metrics: ["adjusted_rand_score"]
+  #  inputs:
+  #    - data.h5ad
+  #    #  - cluster.tsv
+  #  outputs:
+  #    - id: metrics.scores
+  #      path: "{dataset}.scores.json"
