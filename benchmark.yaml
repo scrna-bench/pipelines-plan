@@ -4,14 +4,17 @@ description: "Benchmarking scRNA pipelines (as implemented by Billato et al.: 10
 benchmarker: "Atreya Choudhury, Mark Robinson, Martin Emons, David Wissel"
 version: "1.0.0"
 
-software_backend: "conda"
+software_backend: "apptainer"
 software_environments:
-  datasets_conda_env:
-    name: datasets conda environment
-    conda: envs/datasets-conda.yaml
-  pipelines-r_conda_env:
-    name: pipelines-r conda environment
-    conda: envs/pipelines-r_conda_env.yaml
+  datasets_apptainer_env:
+    name: datasets apptainer environment
+    apptainer: envs/r-bioc-320-micro.sif
+  #datasets_conda_env:
+  #  name: datasets conda environment
+  #  conda: envs/datasets-conda.yaml
+  #pipelines-r_conda_env:
+  #  name: pipelines-r conda environment
+  #  conda: envs/pipelines-r_conda_env.yaml
 #  pipelines-py_conda_env:
 #    name: pipelines-py conda environment
 #    conda: envs/pipelines-py_conda_env.yaml
@@ -27,7 +30,7 @@ stages:
     modules:
       - id: datasets-r
         name: "loads scRNA datasets"
-        software_environment: "datasets_conda_env"
+        software_environment: "datasets_apptainer_env"
         repository:
           url: https://github.com/scrna-bench/datasets
           commit: 411b717
@@ -48,7 +51,7 @@ stages:
     modules:
       - id: pipelines-r
         name: "run r pipelines"
-        software_environment: "pipelines-r_conda_env"
+        software_environment: "datasets_apptainer_env"
         repository:
           url: https://github.com/scrna-bench/pipelines-r
           commit: e415d1f
