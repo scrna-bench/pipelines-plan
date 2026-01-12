@@ -10,5 +10,7 @@ From: bioconductor/bioconductor_docker:RELEASE_3_20
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/bin/python3 /usr/bin/python \
-    && R -e "BiocManager::install(c('argparse','zellkonverter','TENxBrainData','SingleCellMultiModal'))"
+    && R -e "BiocManager::install(c('scRNAseq','argparse','zellkonverter','TENxBrainData','SingleCellMultiModal'))" \
+    && R -e "library(zellkonverter); example(writeH5AD)"
+
 
