@@ -27,6 +27,7 @@ stages:
           commit: main
         parameters:
           - dataset_name: "sc-mix"
+            #- dataset_name: ["sc-mix", "cb"]
   - id: methods
     inputs:
       - data.h5ad
