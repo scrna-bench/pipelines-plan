@@ -8,7 +8,7 @@ software_backend: "apptainer"
 software_environments:
   datasets_apptainer_env:
     name: datasets apptainer environment
-    apptainer: envs/r-bioc-320.sif
+    apptainer: oras://quay.io/omnibenchmark/scrna-bench:r-bioc-320-bf15bdde
   #datasets_conda_env:
   #  name: datasets conda environment
   #  conda: envs/datasets-conda.yaml
