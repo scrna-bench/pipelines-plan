@@ -24,7 +24,7 @@ stages:
         software_environment: "r_apptainer_env"
         repository:
           url: https://github.com/scrna-bench/datasets
-          commit: 411b717
+          commit: main
         parameters:
           - dataset_name: "sc-mix"
   - id: methods
