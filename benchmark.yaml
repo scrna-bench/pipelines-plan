@@ -25,6 +25,21 @@ software_environments:
 #    name: metrics conda env
 #    conda: envs/metrics_conda_env.yaml
 
+metric_collectors:
+  - id: report
+    name: "Gathers and processes metrics from different pipelines"
+    software_environment: "r_apptainer_env"
+    repository:
+      url: https://github.com/scrna-bench/pipelines-report
+      commit: main
+    inputs:
+      - metrics.json
+    outputs:
+      - id: report.ari
+        path: "ari.tsv"
+      - id: report.timings
+        path: "timings.tsv"
+
 stages:
   - id: datasets
     outputs:
