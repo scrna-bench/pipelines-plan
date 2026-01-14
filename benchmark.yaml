@@ -30,6 +30,8 @@ stages:
     outputs:
       - id: data.h5ad
         path: "{dataset}.h5ad"
+      - id: data.clusters_truth
+        path: "{dataset}.clusters_truth.tsv"
     modules:
       - id: datasets-r
         name: "loads scRNA datasets"
@@ -67,3 +69,18 @@ stages:
           commit: main
         parameters:
           - methods: ["scanpy"]
+  - id: metrics
+    inputs:
+      - data.clusters_truth
+      - cluster.tsv
+      - timings.json
+    outputs:
+      - id: metrics.json
+        path: "{dataset}.metrics.json"
+    modules:
+      - id: metrics
+        name: "compute metrics"
+        software_environment: "r_apptainer_env"
+        repository:
+          url: https://github.com/scrna-bench/metrics
+          commit: main
