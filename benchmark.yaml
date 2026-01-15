@@ -11,7 +11,7 @@ software_environments:
     apptainer: oras://quay.io/omnibenchmark/scrna-bench:r-bioc-320-bf15bdde
   pipelines-py_apptainer:
     name: pipelines-py apptainer environment
-    apptainer: envs/scanpy_full.sif
+    apptainer: oras://quay.io/omnibenchmark/scrna-bench:scanpy-latest-amd64
   #datasets_conda_env:
   #  name: datasets conda environment
   #  conda: envs/datasets-conda.yaml
