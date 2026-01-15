@@ -8,7 +8,7 @@ From: python:3.12.9-slim
 
 %post
     # Update and install system dependencies
-    apt-get update && apt-get install -y \
+    apt-get update && apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran \
@@ -80,6 +80,13 @@ From: python:3.12.9-slim
         legacy-api-wrap==1.4.1 \
         unicodedata2==16.0.0 \
         scanpy==1.10.4
+    
+    apt-get purge -y \
+        gcc g++ gfortran cmake make pkg-config \
+        libhdf5-dev libopenblas-dev libigraph-dev libxml2-dev libglpk-dev libgmp-dev \
+        && apt-get autoremove -y \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/* /root/.cache
 
 %environment
     export LC_ALL=C.UTF-8
