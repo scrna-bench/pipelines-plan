@@ -39,4 +39,5 @@ jobs:
       - name: Run benchmark.yaml
         working-directory: omnibenchmark-repo
         run: |
-          pixi run ob run -n ../benchmark.yaml
+          pixi run ob run -d ../benchmark.yaml
+          pixi run ob run ../benchmark.yaml --cores 4
