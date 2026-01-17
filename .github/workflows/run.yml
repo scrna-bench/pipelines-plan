@@ -19,7 +19,7 @@ jobs:
         run: pip install omnibenchmark==0.4.0rc2
 
       - name: Use action                             
-        uses: omnibenchmark/run_omnibenchmark@main
+        uses: markrobinsonuzh/run_omnibenchmark@main
         with:
           yaml: benchmark.yaml          
           backend: apptainer 
