@@ -18,6 +18,6 @@ jobs:
       - name: Use action                             
         uses: omnibenchmark/run_omnibenchmark@main
         with:
-          yaml: tests/benchmark.yaml          
+          yaml: benchmark.yaml          
           backend: apptainer 
 
