@@ -9,59 +9,15 @@ on:
 
 jobs:
   run-benchmark:
-    runs-on: ubuntu-latest
-
+    name: Run ob                                     ## the name of the run
+    runs-on: ubuntu-latest                           ## using the latest ubuntu(docker) GH runner
     steps:
-      - name: Checkout repository
+      - name: Checkout                               ## to checkout the tested repo
         uses: actions/checkout@v4
 
-      - name: Install Pixi
-        run: |
-          curl -fsSL https://pixi.sh/install.sh | bash
-          echo "$HOME/.pixi/bin" >> $GITHUB_PATH
+      - name: Use action                             
+        uses: omnibenchmark/run_omnibenchmark@main
+        with:
+          yaml: tests/benchmark.yaml          
+          backend: apptainer 
 
-      - name: Clone omnibenchmark repository
-        run: |
-          git clone --branch ob-hackathon --depth 1 https://github.com/omnibenchmark/omnibenchmark.git omnibenchmark-repo
-
-      - name: Install omnibenchmark with Pixi
-        working-directory: omnibenchmark-repo
-        run: |
-          pixi install
-
-      - name: install dependencies
-        run: sudo apt update && sudo apt upgrade -y && sudo apt-get install -y build-essential squashfs-tools 
-
-      #- name: Install apptainer
-      #  working-directory: omnibenchmark-repo
-      #  run: |
-      #    curl -s https://raw.githubusercontent.com/apptainer/apptainer/main/tools/install-unprivileged.sh | bash -s - /opt
-      #    /opt/bin/apptainer --version
-      #    export PATH=$PATH:/opt/bin
-
-      # used trick from https://github.com/apptainer/apptainer/issues/2691 for setgroups error
-      - name: Install apptainer (alternative)
-        working-directory: omnibenchmark-repo
-        run: |
-          sudo add-apt-repository -y ppa:apptainer/ppa && sudo apt update && sudo apt install -y apptainer
-          which apptainer
-          apptainer --version
-          sudo cat /etc/apparmor.d/apptainer
-#          sudo tee /etc/apparmor.d/apptainer << 'EOF'
-# Permit unprivileged user namespace creation for apptainer starter
-#abi <abi/4.0>,
-#include <tunables/global>
-#profile apptainer /home/ubuntu/conda/envs/snakemake_env/libexec/apptainer/bin/starter{,-suid} 
-#    flags=(unconfined) {
-#  userns,
-#  # Site-specific additions and overrides. See local/README for details.
-#  include if exists <local/apptainer>
-#}
-#EOF
-#          sudo systemctl reload apparmor
-
-      - name: Run benchmark.yaml
-        working-directory: omnibenchmark-repo
-        run: |
-          pixi run ob run -d ../benchmark.yaml
-          pixi run ob run ../benchmark.yaml --cores 4
