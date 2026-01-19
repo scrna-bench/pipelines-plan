@@ -12,48 +12,26 @@ From: bioconductor/bioconductor_docker:RELEASE_3_20
     && ln -s /usr/bin/python3 /usr/bin/python 
 
     # Installation of Bioc packages
-    R -e 'BiocManager::install("stringi", ask=FALSE, type = "source")'
-    R -e 'BiocManager::install("rARPACK", ask=FALSE)'
-    R -e 'BiocManager::install("RSpectra", ask=FALSE)'
-    R -e 'BiocManager::install("SingleCellExperiment", ask=FALSE)'
-    R -e 'BiocManager::install("zellkonverter", ask=FALSE)'
-    R -e 'BiocManager::install("BiocSingular", ask=FALSE)'
-    R -e 'BiocManager::install("here", ask=FALSE)'
-    R -e 'BiocManager::install("HDF5Array", ask=FALSE)'
-    R -e 'BiocManager::install("mbkmeans", ask=FALSE)'
-    R -e 'BiocManager::install("ggplot2", ask=FALSE)'
-    R -e 'BiocManager::install("scater", ask=FALSE)'
-    R -e 'BiocManager::install("scran", ask=FALSE)'
-    R -e 'BiocManager::install("BiocParallel", ask=FALSE)'
-    R -e 'BiocManager::install("DelayedMatrixStats", ask=FALSE)'
-    R -e 'BiocManager::install("rhdf5", ask=FALSE)'
-    R -e 'BiocManager::install("MultiAssayExperiment", ask=FALSE)'
-    R -e 'BiocManager::install("SingleCellMultiModal", ask=FALSE)'
-    R -e 'BiocManager::install("scuttle", ask=FALSE)'
-    R -e 'BiocManager::install("AnnotationDbi", ask=FALSE)'
-    R -e 'BiocManager::install("mclust", ask=FALSE)'
-    R -e 'BiocManager::install("bluster", ask=FALSE)'
-    R -e 'BiocManager::install("DelayedArray", ask=FALSE)'
-    R -e 'BiocManager::install("dplyr", ask=FALSE)'
-    R -e 'BiocManager::install("Seurat", ask=FALSE)'
-    R -e 'BiocManager::install("patchwork", ask=FALSE)'
-    R -e 'BiocManager::install("BPCells", ask=FALSE)'
-    R -e 'BiocManager::install("SeuratObject", ask=FALSE, type = "source")'
-    R -e 'BiocManager::install("SeuratDisk", ask=FALSE, type = "source")'
-    R -e 'BiocManager::install("scrapper", ask=FALSE)'
-    R -e 'BiocManager::install("parallel", ask=FALSE)'
-    R -e 'BiocManager::install("TENxBrainData", ask=FALSE)'
-    R -e 'BiocManager::install("EnsDb.Hsapiens.v75", ask=FALSE)'
-    R -e 'BiocManager::install("satijalab/azimuth", ask = FALSE)' # not installed
-    R -e 'BiocManager::install("bnprks/BPCells/r", ask = FALSE)'
-    R -e 'BiocManager::install("biomaRt")'
-    R -e 'BiocManager::install("DropletUtils", ask = FALSE)'
-    R -e 'BiocManager::install("argparse", ask = FALSE)'
+    R -q - <<'RSCRIPT'
+pkgs <- c(
+    "rARPACK", "RSpectra", "SingleCellExperiment", "zellkonverter",
+    "BiocSingular", "here", "HDF5Array", "mbkmeans", "ggplot2",
+    "scater", "scran", "BiocParallel", "DelayedMatrixStats",
+    "rhdf5", "MultiAssayExperiment", "SingleCellMultiModal",
+    "scuttle", "AnnotationDbi", "mclust", "bluster", "leidenbase",
+    "DelayedArray", "dplyr", "Seurat", "patchwork",
+    "scrapper", "TENxBrainData", "EnsDb.Hsapiens.v75",
+    "biomaRt", "DropletUtils", "argparse", "GEOquery",
+    "satijalab/azimuth", "bnprks/BPCells/r"
+)
+
+pkgs_src <- c("stringi", "SeuratObject", "SeuratDisk")
+
+BiocManager::install(pkgs, ask = FALSE)
+BiocManager::install(pkgs_src, ask = FALSE, type = "source")
+RSCRIPT
 
 %environment
 # ensures proper encoding
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
-
-
-
