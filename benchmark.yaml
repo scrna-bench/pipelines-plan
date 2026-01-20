@@ -55,8 +55,8 @@ stages:
           url: https://github.com/scrna-bench/datasets
           commit: main
         parameters:
-          - dataset_name: "sc-mix"
-            #- dataset_name: ["sc-mix", "cb"]
+          - dataset_name: ["sc-mix", "be1", "cb"]
+          # - dataset_name: ["sc-mix", "be1", "cb", "1.3m"]
   - id: methods
     inputs:
       - data.h5ad
