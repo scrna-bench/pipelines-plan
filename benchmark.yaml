@@ -36,9 +36,9 @@ metric_collectors:
       - metrics.json
     outputs:
       - id: report.ari
-        path: "out/report/ari.tsv"
+        path: "report/ari.tsv"
       - id: report.timings
-        path: "out/report/timings.tsv"
+        path: "report/timings.tsv"
 
 stages:
   - id: datasets
