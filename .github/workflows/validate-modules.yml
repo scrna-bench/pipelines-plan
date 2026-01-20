@@ -22,7 +22,7 @@ jobs:
 
       - name: Clone omnibenchmark repository
         run: |
-          git clone --branch ob-hackathon --depth 1 https://github.com/omnibenchmark/omnibenchmark.git omnibenchmark-repo
+          git clone --branch dev --depth 1 https://github.com/omnibenchmark/omnibenchmark.git omnibenchmark-repo
 
       - name: Install omnibenchmark with Pixi
         working-directory: omnibenchmark-repo
