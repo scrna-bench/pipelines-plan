@@ -6,15 +6,17 @@ apptainer build scanpy_full.sif scanpy_full.def
 
 ## Using the Container
 
+`--nv` enables NVIDIA GPU support by exposing the host’s GPU devices and driver libraries inside the container. Use it for CUDA/GPU workloads; omit it for CPU-only runs.
+
 ```bash
 # Run Python script
-apptainer exec scanpy_full.sif python script.py
+apptainer exec --nv scanpy_full.sif python script.py
 
 # Interactive Python
-apptainer run scanpy_full.sif
+apptainer run --nv scanpy_full.sif
 
 # Shell access
-apptainer shell scanpy_full.sif
+apptainer shell --nv scanpy_full.sif
 ```
 
 ---
@@ -27,10 +29,9 @@ apptainer shell scanpy_full.sif
 **here:**
 ```
 Bootstrap: docker
-From: python:3.12.9-slim
+From: rapidsai/base:26.02a-cuda12-py3.12
 ```
-- Uses Docker Hub's official Python 3.12.9 slim image (matches `python=3.12.9` from conda yml)
-- `slim` variant provides minimal Debian base
+- Uses RAPIDS base image with CUDA 12 and Python 3.12 (intended for use with `--nv`)
 
 ---
 
@@ -88,4 +89,5 @@ Use `pip install` with exact version pins for Python packages from conda yml
     exec python "$@"
 ```
 - Makes the container executable as a Python interpreter
-- Usage: `apptainer run scanpy_env.sif script.py`
+- Usage (CPU): `apptainer run scanpy_env.sif script.py`
+- Usage (GPU): `apptainer run --nv scanpy_env.sif script.py`
