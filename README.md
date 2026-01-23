@@ -1,6 +1,16 @@
 # Benchmarking scRNA pipelines
 
-A benchmark created using [OmniBenchmark](https://omnibenchmark.org).
+A scRNA-seq pipelines benchmark created using [OmniBenchmark](https://omnibenchmark.org).
+
+## Reproducing
+
+OmniBenchmark is required to run this pipeline and can be installed following [this guide](https://docs.omnibenchmark.org/latest/howto/#installation).
+
+```{bash}
+git clone https://github.com/scrna-bench/pipelines-plan.git
+cd pipelines-plan
+ob run benchmark.yaml
+```
 
 ## Citation
 
