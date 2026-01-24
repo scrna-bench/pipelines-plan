@@ -35,8 +35,8 @@ metric_collectors:
     inputs:
       - metrics.json
     outputs:
-      - id: report.ari
-        path: "report/ari.tsv"
+      - id: report.metrics
+        path: "report/metrics.tsv"
       - id: report.timings
         path: "report/timings.tsv"
       - id: report.plots
@@ -93,6 +93,7 @@ stages:
   - id: metrics
     inputs:
       - data.clusters_truth
+      - pca.tsv
       - cluster.tsv
       - timings.json
     outputs:
@@ -101,7 +102,7 @@ stages:
     modules:
       - id: metrics
         name: "compute metrics"
-        software_environment: "r_apptainer_env"
+        software_environment: "pipelines-py_apptainer"
         repository:
           url: https://github.com/scrna-bench/metrics
           commit: main
