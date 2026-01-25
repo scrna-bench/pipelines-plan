@@ -35,8 +35,8 @@ metric_collectors:
     inputs:
       - metrics.json
     outputs:
-      - id: report.ari
-        path: "report/ari.tsv"
+      - id: report.metrics
+        path: "report/metrics.tsv"
       - id: report.timings
         path: "report/timings.tsv"
       - id: report.plots
@@ -78,7 +78,7 @@ stages:
           commit: main
         parameters:
           - method_name: ["seurat", "osca", "scrapper"]
-            resolution: [0.1, 0.12, 0.14, 0.16]
+            resolution: [0.06, 0.08, 0.1, 0.12, 0.14, 0.16]
             filter: ["manual", "auto"]
       - id: pipelines-py
         name: "run python pipelines"
@@ -87,12 +87,13 @@ stages:
           url: https://github.com/scrna-bench/pipelines-py
           commit: main
         parameters:
-          - method_name: ["scanpy"]
-            resolution: [0.1, 0.12, 0.14, 0.16]
+          - method_name: ["scanpy", "rapids"]
+            resolution: [0.06, 0.08, 0.1, 0.12, 0.14, 0.16]
             filter: ["manual"]
   - id: metrics
     inputs:
       - data.clusters_truth
+      - pca.tsv
       - cluster.tsv
       - timings.json
     outputs:
@@ -101,7 +102,7 @@ stages:
     modules:
       - id: metrics
         name: "compute metrics"
-        software_environment: "r_apptainer_env"
+        software_environment: "pipelines-py_apptainer"
         repository:
           url: https://github.com/scrna-bench/metrics
           commit: main

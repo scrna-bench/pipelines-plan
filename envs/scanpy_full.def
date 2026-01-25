@@ -1,9 +1,9 @@
 Bootstrap: docker
-From: python:3.12.9-slim
+From: rapidsai/base:26.02a-cuda12-py3.12
 
 %labels
-    Author "Aidan Meara"
-    Version "1.0"
+    Author "Aidan Meara, Tom Kitak"
+    Version "2.0"
     Description "Def for sif for running omnibenchmarkized version of scanpy in https://github.com/billila/pca_scwf_paper"
 
 %post
@@ -79,8 +79,10 @@ From: python:3.12.9-slim
         stdlib-list==0.11.1 \
         legacy-api-wrap==1.4.1 \
         unicodedata2==16.0.0 \
-        scanpy==1.10.4
-    
+        scanpy==1.10.4 \
+        rapids-singlecell==0.13.5
+
+    # Cleanup
     apt-get purge -y \
         gcc g++ gfortran cmake make pkg-config \
         libhdf5-dev libopenblas-dev libigraph-dev libxml2-dev libglpk-dev libgmp-dev \

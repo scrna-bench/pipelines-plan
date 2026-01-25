@@ -9,7 +9,7 @@ OmniBenchmark is required to run this pipeline and can be installed following [t
 ```{bash}
 git clone https://github.com/scrna-bench/pipelines-plan.git
 cd pipelines-plan
-ob run benchmark.yaml
+ob run benchmark.yaml -- --apptainer-args='--nv'
 ```
 
 ## Citation
