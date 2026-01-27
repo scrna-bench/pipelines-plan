@@ -80,6 +80,9 @@ stages:
           - method_name: ["seurat", "osca", "scrapper"]
             resolution: [0.06, 0.08, 0.1, 0.12, 0.14, 0.16]
             filter: ["manual", "auto"]
+            n_comp: [30, 50]
+            n_neig: [5, 10, 15]
+            n_hvg: [500, 750, 1000]
       - id: pipelines-py
         name: "run python pipelines"
         software_environment: "pipelines-py_apptainer"
@@ -90,6 +93,9 @@ stages:
           - method_name: ["scanpy", "rapids"]
             resolution: [0.06, 0.08, 0.1, 0.12, 0.14, 0.16]
             filter: ["manual"]
+            n_comp: [30, 50]
+            n_neig: [5, 10, 15]
+            n_hvg: [500, 750, 1000]
   - id: metrics
     inputs:
       - data.clusters_truth
