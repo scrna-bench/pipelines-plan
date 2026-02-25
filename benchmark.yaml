@@ -80,11 +80,11 @@ stages:
           commit: main
         parameters:
           - method_name: ["seurat", "osca", "scrapper"]
-            n_cluster: [5, 7, 9, 11]
+            n_cluster: [5, 7, 9]
             filter: ["manual", "auto"]
-            n_comp: [20, 30, 50]
-            n_neig: [10, 15, 20, 30]
-            n_hvg: [1000, 1500, 2000]
+            n_comp: [30]
+            n_neig: [15]
+            n_hvg: [2000]
       - id: pipelines-py
         name: "run python pipelines"
         software_environment: "pipelines-py_apptainer"
@@ -92,13 +92,12 @@ stages:
           url: https://github.com/scrna-bench/pipelines-py
           commit: main
         parameters:
-          #- method_name: ["scanpy", "rapids"]
-          - method_name: ["scanpy"]
-            n_cluster: [5, 7, 9, 11]
+          - method_name: ["scanpy", "rapids"]
+            n_cluster: [5, 7, 9]
             filter: ["manual"]
-            n_comp: [20, 30, 50]
-            n_neig: [10, 15, 20, 30]
-            n_hvg: [1000, 1500, 2000]
+            n_comp: [30]
+            n_neig: [15]
+            n_hvg: [2000]
   - id: metrics
     inputs:
       - data.clusters_truth
