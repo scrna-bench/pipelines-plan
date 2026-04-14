@@ -8,7 +8,8 @@ software_backend: apptainer
 software_environments:
   r_apptainer:
     name: R apptainer
-    apptainer: oras://quay.io/omnibenchmark/scrna-bench:r-bioc-320-latest-amd64
+    apptainer: envs/r-bioc-320.sif
+    #apptainer: oras://quay.io/omnibenchmark/scrna-bench:r-bioc-320-latest-amd64
   py_apptainer_rsc_0.13.5:
     name: python apptainer with rsc v0.13.5
     apptainer: oras://quay.io/omnibenchmark/scrna-bench:py-rsc-0.13.5-latest-amd64
@@ -71,9 +72,9 @@ stages:
         software_environment: r_apptainer
         repository:
           url: https://github.com/scrna-bench/pipelines-r
-          commit: "8493aa2"
+          commit: "8a1a8da"
         parameters:
-          - method_name: ["bpcells"]
+          - method_name: ["scrapper"]
             d_cluster: [0]
             filter: ["manual"]
             n_comp: [30]

@@ -27,8 +27,9 @@ pkgs <- c(
 
 pkgs_src <- c("stringi", "SeuratObject", "SeuratDisk")
 
-BiocManager::install(pkgs, ask = FALSE)
-BiocManager::install(pkgs_src, ask = FALSE, type = "source")
+BiocManager::install(pkgs, ask = FALSE, Ncpus = 8)
+BiocManager::install(pkgs_src, ask = FALSE, type = "source", Ncpus = 8)
+library(zellkonverter); file <- system.file("extdata", "krumsiek11.h5ad", package = "zellkonverter"); sce <- readH5AD(file)
 RSCRIPT
 
 %environment
