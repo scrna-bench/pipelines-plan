@@ -74,7 +74,7 @@ stages:
           url: https://github.com/scrna-bench/pipelines-r
           commit: "8a1a8da"
         parameters:
-          - method_name: ["scrapper"]
+          - method_name: ["bpcells"]
             d_cluster: [0]
             filter: ["manual"]
             n_comp: [30]
