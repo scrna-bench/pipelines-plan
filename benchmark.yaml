@@ -48,9 +48,9 @@ stages:
         software_environment: r_apptainer
         repository:
           url: https://github.com/scrna-bench/datasets
-          commit: "63c66b3"
+          commit: "d2e05fc"
         parameters:
-          - dataset_name: ["be1"]
+          - dataset_name: ["pbmc68k"]
           # - dataset_name: ["sc-mix", "be1", "cb", "1.3m"]
   - id: methods
     inputs:
@@ -73,7 +73,7 @@ stages:
         software_environment: r_apptainer
         repository:
           url: https://github.com/scrna-bench/pipelines-r
-          commit: "d8ef8de"
+          commit: "3e4b4fd"
         parameters:
           - method_name: ["scrapper"]
             d_cluster: [0]
