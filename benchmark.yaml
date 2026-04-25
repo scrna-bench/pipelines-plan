@@ -16,22 +16,22 @@ software_environments:
     name: python apptainer with rsc v0.14.1
     apptainer: oras://quay.io/omnibenchmark/scrna-bench:py-rsc-0.14.1-latest-amd64
 
-metric_collectors:
-  - id: report
-    name: Gathers and processes metrics from different pipelines
-    software_environment: r_apptainer
-    repository:
-      url: https://github.com/scrna-bench/pipelines-report
-      commit: "f6a4f9b"
-    inputs:
-      - metrics.metrics
-    outputs:
-      - id: report.metrics
-        path: "report/metrics.tsv"
-      - id: report.timings
-        path: "report/timings.tsv"
-      - id: report.plots
-        path: "report/plots.html"
+#metric_collectors:
+#  - id: report
+#    name: Gathers and processes metrics from different pipelines
+#    software_environment: r_apptainer
+#    repository:
+#      url: https://github.com/scrna-bench/pipelines-report
+#      commit: "f6a4f9b"
+#    inputs:
+#      - metrics.metrics
+#    outputs:
+#      - id: report.metrics
+#        path: "report/metrics.tsv"
+#      - id: report.timings
+#        path: "report/timings.tsv"
+#      - id: report.plots
+#        path: "report/plots.html"
 
 stages:
   - id: datasets
@@ -82,19 +82,20 @@ stages:
             n_neig: [15]
             n_hvg: [2000]
             max_threads: [1, 4, 8]
-      #- id: pipelines-py
-      #  name: run python pipelines
-      #  software_environment: py_apptainer_rsc_0.14.1
-      #  repository:
-      #    url: https://github.com/scrna-bench/pipelines-py
-      #    commit: "f29da4e"
-      #  parameters:
-      #    - method_name: ["scanpy", "rapids"]
-      #      d_cluster: [-2, -1, 0, 1, 2]
-      #      filter: "manual"
-      #      n_comp: [20, 30, 50]
-      #      n_neig: [10, 15, 20, 30]
-      #      n_hvg: [1000, 1500, 2000]
+      - id: pipelines-py
+        name: run python pipelines
+        software_environment: py_apptainer_rsc_0.14.1
+        repository:
+          url: https://github.com/scrna-bench/pipelines-py
+          commit: "59ce601"
+        parameters:
+          - method_name: ["scanpy"]
+            d_cluster: [0]
+            filter: ["manual"]
+            n_comp: [30]
+            n_neig: [15]
+            n_hvg: [2000]
+            max_threads: [1, 4, 8]
       #- id: pipelines-py-old
       #  name: run python pipelines with older rapids-singlecell
       #  software_environment: py_apptainer_rsc_0.13.5
