@@ -1,0 +1,9 @@
+# Smoke run: two datasets, every pipeline with its first parameter
+# combination, and the METRIC / REPORT gathers over those.
+#   pixi run run-conda --unpinned --filter filters/first_trim.yaml
+# Picks override --with-capability, so the GPU (rapids) modules are included.
+picks:
+  DATA: {sc_mix: all, be1: all}
+  PIPELINE: {'*': first}
+  METRIC: {'*': all}
+  REPORT: {'*': all}
