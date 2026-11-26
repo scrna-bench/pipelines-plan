@@ -1,0 +1,131 @@
+"""Conda route helpers for benchmark.yaml.
+
+  sync         export each environment's pixi lock project from its module
+               repository, at the commit benchmark.yaml pins, as a fully pinned
+               conda file at the environment's `conda:` path
+  check        like sync, but only report copies that differ (exit 1 if any)
+  conda-plan   write benchmark.conda.yaml: benchmark.yaml with the conda backend
+
+Each environment's pixi project directory is in envs/sources.yaml; its
+repository and commit come from the modules in benchmark.yaml that use it. The
+project's pixi.toml and pixi.lock are fetched into a temporary directory and
+exported with `pixi workspace export conda-environment --from-lock-file`
+(linux-64); nothing is installed. --ref REF fetches every module at REF (a
+branch or tag, e.g. api-0.8) instead of the commit the plan pins. --from-dir
+DIR reads <DIR>/<repo name>/<path> from local working trees (development).
+"""
+
+import argparse
+import re
+import subprocess
+import sys
+import tempfile
+import urllib.request
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+PLAN = ROOT / "benchmark.yaml"
+CONDA_PLAN = ROOT / "benchmark.conda.yaml"
+
+
+def env_sources(plan):
+    """env id -> (repository url, commit), from the modules using the env."""
+    found = {}
+    for stage in plan["stages"]:
+        for module in stage.get("modules", []):
+            env = module.get("software_environment")
+            repo = module["repository"]
+            ref = (repo["url"], str(repo["commit"]))
+            if env in found and found[env] != ref:
+                sys.exit(f"{env}: modules pin different repositories/commits: {found[env]} vs {ref}")
+            found[env] = ref
+    return found
+
+
+def fetch(url, commit, path, from_dir):
+    name = url.rstrip("/").removesuffix(".git").rsplit("/", 1)[-1]
+    if from_dir:
+        return (Path(from_dir) / name / path).read_text()
+    if url.startswith("/"):
+        return subprocess.run(["git", "-C", url, "show", f"{commit}:{path}"],
+                              check=True, capture_output=True, text=True).stdout
+    m = re.match(r"https://github\.com/([^/]+/[^/]+?)(?:\.git)?$", url)
+    if not m:
+        sys.exit(f"don't know how to fetch from {url}")
+    raw = f"https://raw.githubusercontent.com/{m.group(1)}/{commit}/{path}"
+    with urllib.request.urlopen(raw) as r:
+        return r.read().decode()
+
+
+def export(url, commit, project, env_id, from_dir):
+    """The pinned conda file of the pixi project at <project> in the module."""
+    with tempfile.TemporaryDirectory() as tmp:
+        for name in ("pixi.toml", "pixi.lock"):
+            (Path(tmp) / name).write_text(fetch(url, commit, f"{project}/{name}", from_dir))
+        out = Path(tmp) / "environment.yml"
+        subprocess.run(
+            ["pixi", "workspace", "export", "conda-environment",
+             "--manifest-path", str(Path(tmp) / "pixi.toml"), "--from-lock-file",
+             "--platform", "linux-64", "--name", env_id, str(out)],
+            check=True, capture_output=True, text=True,
+        )
+        return out.read_text()
+
+
+def sync(check, from_dir, ref=None):
+    plan = yaml.safe_load(PLAN.read_text())
+    sources = yaml.safe_load((ROOT / "envs" / "sources.yaml").read_text())
+    refs = env_sources(plan)
+    stale = []
+    for env_id, env in plan["software_environments"].items():
+        if "conda" not in env:
+            continue
+        if env_id not in sources:
+            sys.exit(f"{env_id}: no source project in envs/sources.yaml")
+        if env_id not in refs:
+            print(f"{env_id}: no module uses it, skipped")
+            continue
+        url, commit = refs[env_id]
+        commit = ref or commit
+        text = export(url, commit, sources[env_id], env_id, from_dir)
+        dest = ROOT / env["conda"]
+        current = dest.read_text() if dest.exists() else None
+        if current == text:
+            continue
+        stale.append(env_id)
+        where = f"{url}@{commit}:{sources[env_id]}"
+        if check:
+            print(f"{env_id}: {env['conda']} differs from the export of {where}")
+        else:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(text)
+            print(f"{env_id}: {env['conda']} <- {where}")
+    if check and stale:
+        sys.exit(1)
+
+
+def conda_plan():
+    text = PLAN.read_text()
+    new, n = re.subn(r"(?m)^software_backend: \S+$", "software_backend: conda", text)
+    if n != 1:
+        sys.exit("benchmark.yaml: expected exactly one top-level software_backend line")
+    CONDA_PLAN.write_text("# generated from benchmark.yaml by `pixi run conda-plan`; do not edit\n" + new)
+    print(f"wrote {CONDA_PLAN.name}")
+
+
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("command", choices=["sync", "check", "conda-plan"])
+    p.add_argument("--ref", help="fetch modules at this branch/tag instead of the pinned commits")
+    p.add_argument("--from-dir", help="read pixi projects from local repository checkouts under DIR")
+    a = p.parse_args()
+    if a.command == "conda-plan":
+        conda_plan()
+    else:
+        sync(a.command == "check", a.from_dir, a.ref)
+
+
+if __name__ == "__main__":
+    main()

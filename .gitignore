@@ -56,3 +56,10 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# conda route: generated plan and its outputs
+benchmark.conda.yaml
+out-conda/
+
+# pixi
+.pixi/
