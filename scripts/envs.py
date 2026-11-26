@@ -10,8 +10,9 @@ Each environment's pixi project directory is in envs/sources.yaml; its
 repository and commit come from the modules in benchmark.yaml that use it. The
 project's pixi.toml and pixi.lock are fetched into a temporary directory and
 exported with `pixi workspace export conda-environment --from-lock-file`
-(linux-64); nothing is installed. --from-dir DIR reads
-<DIR>/<repo name>/<path> from local working trees instead (development).
+(linux-64); nothing is installed. --ref REF fetches every module at REF (a
+branch or tag, e.g. api-0.8) instead of the commit the plan pins. --from-dir
+DIR reads <DIR>/<repo name>/<path> from local working trees (development).
 """
 
 import argparse
@@ -73,7 +74,7 @@ def export(url, commit, project, env_id, from_dir):
         return out.read_text()
 
 
-def sync(check, from_dir):
+def sync(check, from_dir, ref=None):
     plan = yaml.safe_load(PLAN.read_text())
     sources = yaml.safe_load((ROOT / "envs" / "sources.yaml").read_text())
     refs = env_sources(plan)
@@ -87,6 +88,7 @@ def sync(check, from_dir):
             print(f"{env_id}: no module uses it, skipped")
             continue
         url, commit = refs[env_id]
+        commit = ref or commit
         text = export(url, commit, sources[env_id], env_id, from_dir)
         dest = ROOT / env["conda"]
         current = dest.read_text() if dest.exists() else None
@@ -116,12 +118,13 @@ def conda_plan():
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("command", choices=["sync", "check", "conda-plan"])
-    p.add_argument("--from-dir", help="read exports from local repository checkouts under DIR")
+    p.add_argument("--ref", help="fetch modules at this branch/tag instead of the pinned commits")
+    p.add_argument("--from-dir", help="read pixi projects from local repository checkouts under DIR")
     a = p.parse_args()
     if a.command == "conda-plan":
         conda_plan()
     else:
-        sync(a.command == "check", a.from_dir)
+        sync(a.command == "check", a.from_dir, a.ref)
 
 
 if __name__ == "__main__":
