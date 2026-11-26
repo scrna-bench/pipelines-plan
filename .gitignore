@@ -57,5 +57,9 @@ Thumbs.db
 *.tmp
 *.temp
 
+# conda route: generated plan and its outputs
+benchmark.conda.yaml
+out-conda/
+
 # pixi
 .pixi/

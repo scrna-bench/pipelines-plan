@@ -1,4 +1,5 @@
-# Runs the benchmark with a pinned omnibenchmark. Assumes apptainer on the host.
+# Runs the benchmark with a pinned omnibenchmark. Assumes apptainer (default
+# backend) or conda (conda route) on the host.
 [workspace]
 name = "pipelines-plan"
 channels = ["conda-forge"]
@@ -14,3 +15,7 @@ omnibenchmark = "==0.8.0"
 validate = "ob validate plan benchmark.yaml"
 dry = "ob run benchmark.yaml --dry"
 run = "ob run benchmark.yaml"
+sync-envs = "python scripts/envs.py sync"
+check-envs = "python scripts/envs.py check"
+conda-plan = "python scripts/envs.py conda-plan"
+run-conda = { cmd = "ob run benchmark.conda.yaml --out-dir out-conda", depends-on = ["conda-plan"] }

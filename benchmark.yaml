@@ -11,30 +11,39 @@ software_environments:
   r_datasets:
     name: datasets (rv, R 4.5, Bioconductor 3.22)
     apptainer: docker://ghcr.io/scrna-bench/datasets:r-latest
+    conda: envs/r_datasets.yml
   r_pipelines:
     name: Seurat, OSCA, scrapper (rv, R 4.5, Bioconductor 3.22)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-r:r-latest
+    conda: envs/r_pipelines.yml
   r_bixverse:
     name: bixverse (rv, R 4.5)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-r:bixverse-latest
+    conda: envs/r_bixverse.yml
   py_scanpy:
     name: scanpy (pixi)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-py:scanpy-latest
+    conda: envs/py_scanpy.yml
   py_rsc014:
     name: rapids-singlecell 0.14.1, RAPIDS 26.02, CUDA 12 (pixi)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-py:rsc-0.14-latest
+    conda: envs/py_rsc014.yml
   py_rsc013:
     name: rapids-singlecell 0.13.5, RAPIDS 26.02, CUDA 12 (pixi)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-py:rsc-0.13-latest
+    conda: envs/py_rsc013.yml
   py_brisc:
     name: brisc (pixi)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-py:brisc-latest
+    conda: envs/py_brisc.yml
   py_metrics:
     name: clustering metrics (pixi)
     apptainer: docker://ghcr.io/scrna-bench/metrics:metrics-latest
+    conda: envs/py_metrics.yml
   r_report:
     name: report (rv, R 4.5)
     apptainer: docker://ghcr.io/scrna-bench/pipelines-report:r-latest
+    conda: envs/r_report.yml
 stages:
   - id: DATA
     outputs:

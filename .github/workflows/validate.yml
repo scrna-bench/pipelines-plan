@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - benchmark.yaml
+      - envs/**
       - pixi.toml
   workflow_dispatch:
 
@@ -21,3 +22,7 @@ jobs:
         run: |
           pixi run validate
 
+      # the conda route's env files must match the module exports at the
+      # commits benchmark.yaml pins
+      - name: Conda env files match the modules
+        run: pixi run check-envs
