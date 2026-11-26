@@ -2,123 +2,218 @@ name: scRNA Benchmark (pipelines)
 id: pipelines-plan
 description: "Benchmarking scRNA pipelines (as implemented by Billato et al.: 10.1101/2025.10.28.681564)"
 benchmarker: Atreya Choudhury, Mark Robinson, Martin Emons, David Wissel, Samuel Gunz
-version: "1.1"
+
+version: "2.0"
+api_version: "0.8.0"
 
 software_backend: apptainer
 software_environments:
-  r_apptainer:
-    name: R apptainer
-    apptainer: oras://quay.io/omnibenchmark/scrna-bench:r-bioc-320-latest-amd64
-  py_apptainer_rsc_0.13.5:
-    name: python apptainer with rsc v0.13.5
-    apptainer: oras://quay.io/omnibenchmark/scrna-bench:py-rsc-0.13.5-latest-amd64
-  py_apptainer_rsc_0.14.1:
-    name: python apptainer with rsc v0.14.1
-    apptainer: oras://quay.io/omnibenchmark/scrna-bench:py-rsc-0.14.1-latest-amd64
-
-metric_collectors:
-  - id: report
-    name: Gathers and processes metrics from different pipelines
-    software_environment: r_apptainer
-    repository:
-      url: https://github.com/scrna-bench/pipelines-report
-      commit: "f6a4f9b"
-    inputs:
-      - metrics.metrics
-    outputs:
-      - id: report.metrics
-        path: "report/metrics.tsv"
-      - id: report.timings
-        path: "report/timings.tsv"
-      - id: report.plots
-        path: "report/plots.html"
-
+  r_datasets:
+    name: datasets (rv, R 4.5, Bioconductor 3.22)
+    apptainer: docker://ghcr.io/scrna-bench/datasets:r-latest
+  r_pipelines:
+    name: Seurat, OSCA, scrapper (rv, R 4.5, Bioconductor 3.22)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-r:r-latest
+  r_bixverse:
+    name: bixverse (rv, R 4.5)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-r:bixverse-latest
+  py_scanpy:
+    name: scanpy (pixi)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-py:scanpy-latest
+  py_rsc014:
+    name: rapids-singlecell 0.14.1, RAPIDS 26.02, CUDA 12 (pixi)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-py:rsc-0.14-latest
+  py_rsc013:
+    name: rapids-singlecell 0.13.5, RAPIDS 26.02, CUDA 12 (pixi)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-py:rsc-0.13-latest
+  py_brisc:
+    name: brisc (pixi)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-py:brisc-latest
+  py_metrics:
+    name: clustering metrics (pixi)
+    apptainer: docker://ghcr.io/scrna-bench/metrics:metrics-latest
+  r_report:
+    name: report (rv, R 4.5)
+    apptainer: docker://ghcr.io/scrna-bench/pipelines-report:r-latest
 stages:
-  - id: datasets
+  - id: DATA
     outputs:
-      - id: data.h5ad
-        path: "{dataset}.h5ad"
-      - id: data.clusters_truth
-        path: "{dataset}.clusters_truth.tsv"
-      - id: data.clusters_truth_num
-        path: "{dataset}.clusters_truth_num.txt"
+      - id: data_h5ad
+        path: "{module.id}.h5ad"
+      - id: data_clusters_truth
+        path: "{module.id}.clusters_truth.tsv"
+      - id: data_clusters_truth_num
+        path: "{module.id}.clusters_truth_num.txt"
+      - id: data_events
+        path: "obkit-events.jsonl"
     modules:
-      - id: datasets-r
-        name: loads scRNA datasets
-        software_environment: r_apptainer
+      - id: sc_mix
+        name: scMixology, five cell lines (10x)
+        software_environment: r_datasets
         repository:
           url: https://github.com/scrna-bench/datasets
-          commit: "782b517"
-        parameters:
-          - dataset_name: ["sc-mix", "be1", "cb"]
-          # - dataset_name: ["sc-mix", "be1", "cb", "1.3m"]
-  - id: methods
+          commit: api-0.8
+          entrypoint: sc_mix
+      - id: be1
+        name: GEO GSE243665
+        software_environment: r_datasets
+        repository:
+          url: https://github.com/scrna-bench/datasets
+          commit: api-0.8
+          entrypoint: be1
+      - id: cb
+        name: cord blood CITE-seq
+        software_environment: r_datasets
+        repository:
+          url: https://github.com/scrna-bench/datasets
+          commit: api-0.8
+          entrypoint: cb
+      # - id: tenx_1_3m
+      #   name: 10x 1.3M mouse brain
+      #   software_environment: r_datasets
+      #   repository:
+      #     url: https://github.com/scrna-bench/datasets
+      #     commit: api-0.8
+      #     entrypoint: tenx_1_3m
+
+  - id: PIPELINE
     inputs:
-      - data.h5ad
-      - data.clusters_truth_num
+      - data_h5ad
+      - data_clusters_truth_num
     outputs:
-      - id: methods.timings
-        path: "{dataset}.timings.json"
-      - id: methods.clustering_info
-        path: "{dataset}.clustering_info.json"
-      - id: methods.clusters
-        path: "{dataset}.clusters.tsv"
-      - id: methods.pca
-        path: "{dataset}.pca.tsv"
+      - id: methods_clusters
+        path: "{module.id}.clusters.tsv"
+      - id: methods_pca
+        path: "{module.id}.pca.tsv"
+      - id: methods_hvgs
+        path: "{module.id}.hvgs.tsv"
+      - id: methods_clustering_info
+        path: "{module.id}.clustering_info.json"
+      - id: methods_events
+        path: "obkit-events.jsonl"
     modules:
-      - id: pipelines-r
-        name: run R pipelines
-        software_environment: r_apptainer
+      - id: seurat
+        name: Seurat
+        software_environment: r_pipelines
         repository:
           url: https://github.com/scrna-bench/pipelines-r
-          commit: "33129f6"
-        parameters:
-          - method_name: ["seurat", "osca", "scrapper"]
-            d_cluster: [-2, -1, 0, 1, 2]
+          commit: api-0.8
+          entrypoint: seurat
+        parameters: &r_grid
+          - d_cluster: [-2, -1, 0, 1, 2]
             filter: ["manual", "auto"]
             n_comp: [20, 30, 50]
             n_neig: [10, 15, 20, 30]
             n_hvg: [1000, 1500, 2000]
-      - id: pipelines-py
-        name: run python pipelines
-        software_environment: py_apptainer_rsc_0.14.1
+      - id: osca
+        name: OSCA (scran, scater, bluster)
+        software_environment: r_pipelines
+        repository:
+          url: https://github.com/scrna-bench/pipelines-r
+          commit: api-0.8
+          entrypoint: osca
+        parameters: *r_grid
+      - id: scrapper
+        name: scrapper
+        software_environment: r_pipelines
+        repository:
+          url: https://github.com/scrna-bench/pipelines-r
+          commit: api-0.8
+          entrypoint: scrapper
+        parameters: *r_grid
+      - id: bixverse
+        name: bixverse
+        software_environment: r_bixverse
+        repository:
+          url: https://github.com/scrna-bench/pipelines-r
+          commit: api-0.8
+          entrypoint: bixverse
+        parameters: *r_grid
+      - id: scanpy
+        name: scanpy
+        software_environment: py_scanpy
         repository:
           url: https://github.com/scrna-bench/pipelines-py
-          commit: "f29da4e"
-        parameters:
-          - method_name: ["scanpy", "rapids"]
-            d_cluster: [-2, -1, 0, 1, 2]
+          commit: api-0.8
+          entrypoint: scanpy
+        parameters: &py_grid
+          - d_cluster: [-2, -1, 0, 1, 2]
             filter: "manual"
             n_comp: [20, 30, 50]
             n_neig: [10, 15, 20, 30]
             n_hvg: [1000, 1500, 2000]
-      - id: pipelines-py-old
-        name: run python pipelines with older rapids-singlecell
-        software_environment: py_apptainer_rsc_0.13.5
+      - id: brisc
+        name: brisc (Leiden only)
+        software_environment: py_brisc
         repository:
           url: https://github.com/scrna-bench/pipelines-py
-          commit: "f29da4e"
+          commit: api-0.8
+          entrypoint: brisc
+        parameters: *py_grid
+      - id: rapids_rsc014
+        name: rapids-singlecell 0.14.1 (GPU)
+        software_environment: py_rsc014
+        requires_capabilities: [gpu]
+        repository:
+          url: https://github.com/scrna-bench/pipelines-py
+          commit: api-0.8
+          entrypoint: rapids
+        parameters: *py_grid
+      - id: rapids_rsc013
+        name: rapids-singlecell 0.13.5 (GPU), for the version comparison
+        software_environment: py_rsc013
+        requires_capabilities: [gpu]
+        repository:
+          url: https://github.com/scrna-bench/pipelines-py
+          commit: api-0.8
+          entrypoint: rapids
         parameters:
-          - method_name: "rapids"
-            d_cluster: [-2, -1, 0, 1, 2]
+          - d_cluster: [-2, -1, 0, 1, 2]
             filter: "manual"
             n_comp: 30
             n_neig: 20
             n_hvg: 1000
-  - id: metrics
+
+  # one job per dataset: scores every pipeline run against that dataset's truth
+  - id: METRIC
+    resources:
+      cores: 8
     inputs:
-      - data.clusters_truth
-      - methods.pca
-      - methods.clusters
-      - methods.timings
-      - methods.clustering_info
+      - data_clusters_truth
+    gather:
+      group_by: DATA
+      from: [methods_clusters, methods_pca, methods_clustering_info, methods_events]
     outputs:
-      - id: metrics.metrics
-        path: "{dataset}.metrics.json"
+      - id: metrics_tsv
+        path: "{module.id}_metrics.tsv"
+      - id: timings_tsv
+        path: "{module.id}_timings.tsv"
     modules:
-      - id: metrics-py
-        name: compute clustering metrics
-        software_environment: py_apptainer_rsc_0.14.1
+      - id: metrics
+        name: clustering metrics and phase timings
+        software_environment: py_metrics
         repository:
           url: https://github.com/scrna-bench/metrics
-          commit: "a97c3d8"
+          commit: api-0.8
+          entrypoint: metrics
+
+  # one job for the whole benchmark
+  - id: REPORT
+    gather:
+      from: [metrics_tsv, timings_tsv]
+      path: report
+    outputs:
+      - id: report_metrics_tsv
+        path: "metrics.tsv"
+      - id: report_timings_tsv
+        path: "timings.tsv"
+      - id: report_html
+        path: "plots.html"
+    modules:
+      - id: report
+        name: benchmark report
+        software_environment: r_report
+        repository:
+          url: https://github.com/scrna-bench/pipelines-report
+          commit: api-0.8
+          entrypoint: report
