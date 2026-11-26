@@ -1,4 +1,4 @@
-name: scanpy
+name: py_scanpy
 channels:
 - conda-forge
 - nodefaults

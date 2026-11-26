@@ -1,13 +1,14 @@
-# Where each software environment's conda export lives in its module
-# repository. The repository and commit come from the modules that use the
-# environment in benchmark.yaml; `pixi run sync-envs` copies the file at that
-# commit to the environment's `conda:` path.
-r_datasets: envs/r-conda/environment.yml
-r_pipelines: envs/r-conda/environment.yml
-r_bixverse: envs/bixverse-conda/environment.yml
-py_scanpy: envs/scanpy/environment.yml
-py_rsc014: envs/rsc-0.14/environment.yml
-py_rsc013: envs/rsc-0.13/environment.yml
-py_brisc: envs/brisc/environment.yml
-py_metrics: envs/metrics/environment.yml
-r_report: envs/r-conda/environment.yml
+# The pixi lock project (directory with pixi.toml + pixi.lock) each software
+# environment's conda file is exported from, in its module repository. The
+# repository and commit come from the modules that use the environment in
+# benchmark.yaml; `pixi run sync-envs` exports the lock at that commit to the
+# environment's `conda:` path.
+r_datasets: envs/r-conda
+r_pipelines: envs/r-conda
+r_bixverse: envs/bixverse-conda
+py_scanpy: envs/scanpy
+py_rsc014: envs/rsc-0.14
+py_rsc013: envs/rsc-0.13
+py_brisc: envs/brisc
+py_metrics: envs/metrics
+r_report: envs/r-conda

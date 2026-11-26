@@ -1,4 +1,4 @@
-name: metrics
+name: py_metrics
 channels:
 - conda-forge
 - nodefaults

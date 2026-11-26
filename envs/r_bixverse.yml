@@ -1,4 +1,4 @@
-name: bixverse-conda
+name: r_bixverse
 channels:
 - conda-forge
 - bioconda

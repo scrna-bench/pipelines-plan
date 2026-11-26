@@ -1,4 +1,4 @@
-name: rsc-0.14
+name: py_rsc014
 channels:
 - rapidsai
 - conda-forge

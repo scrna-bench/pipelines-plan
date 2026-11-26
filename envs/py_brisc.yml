@@ -1,4 +1,4 @@
-name: brisc
+name: py_brisc
 channels:
 - conda-forge
 - nodefaults

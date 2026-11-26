@@ -1,4 +1,4 @@
-name: r-conda
+name: r_report
 channels:
 - conda-forge
 - bioconda
